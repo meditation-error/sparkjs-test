@@ -1,0 +1,40 @@
+<style> body {margin: 0;} </style>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.174.0/three.module.js",
+      "@sparkjsdev/spark": "https://sparkjs.dev/releases/spark/0.1.6/spark.module.js"
+    }
+  }
+</script>
+<script type="module">
+  import * as THREE from "three";
+  import { SplatMesh } from "@sparkjsdev/spark";
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement)
+
+  const splatURL = "https://www.mediamarc.nl/nerf/splat/ravensteinc.splat";
+  const farm = new SplatMesh({ url: splatURL });
+  farm.rotation.set(0, 0, Math.PI );
+  scene.add(farm);
+
+  const materialProps = { color: new THREE.Color(1.0, 0.7, 0,0), transparent: true }
+  const material =  new THREE.MeshBasicMaterial(materialProps)
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material)
+  mesh.position.set(0, -1, 0);
+  mesh.scale.set(0.5,5,0.5)
+  scene.add(mesh);
+
+  const controls = new OrbitControls(camera, renderer.domElement)
+  camera.position.set(0, -1, 5);
+
+  renderer.setAnimationLoop(function animate(time) {
+    renderer.render(scene, camera);
+    controls.update(camera);    
+  });
+  </script>
